@@ -1,0 +1,13 @@
+    .page { padding: 0; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-title { font-size: 24px; font-weight: 600; color: #1a237e; margin: 0; }
+    .form-card { padding: 24px; margin-bottom: 16px; }
+    .form-card h3 { margin: 0 0 16px; font-size: 16px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .full-col { grid-column: 1 / -1; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .detail-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; }
+    .flex-1 { flex: 1; min-width: 120px; }
+    .flex-2 { flex: 2; min-width: 200px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+    mat-form-field { width: 100%; }

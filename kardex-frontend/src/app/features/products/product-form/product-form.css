@@ -1,0 +1,8 @@
+    .page { padding: 0; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-title { font-size: 24px; font-weight: 600; color: #1a237e; margin: 0; }
+    .form-card { padding: 24px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .full-col { grid-column: 1 / -1; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+    mat-form-field { width: 100%; }

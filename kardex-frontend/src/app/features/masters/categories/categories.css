@@ -1,0 +1,12 @@
+    .page { padding: 0; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-title { font-size: 24px; font-weight: 600; color: #1a237e; margin: 0; }
+    .form-card { padding: 20px; margin-bottom: 16px; }
+    .form-card h3 { margin: 0 0 16px; }
+    .inline-form { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+    .inline-form mat-form-field { flex: 1; min-width: 200px; }
+    .form-actions { display: flex; gap: 8px; align-items: center; padding-top: 4px; }
+    .full-table { width: 100%; }
+    .loading { display: flex; justify-content: center; padding: 40px; }
+    .no-data { text-align: center; padding: 40px; color: #999; }
+    .no-data mat-icon { font-size: 48px; width: 48px; height: 48px; display: block; margin: 0 auto 8px; }

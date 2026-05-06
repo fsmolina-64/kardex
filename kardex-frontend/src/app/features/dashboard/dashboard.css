@@ -1,0 +1,12 @@
+.dashboard { padding: 0; }
+    .page-title { font-size: 24px; font-weight: 600; color: #1a237e; margin: 0 0 24px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .kpi-card { padding: 20px; text-align: center; cursor: default; transition: transform 0.2s; }
+    .kpi-card:hover { transform: translateY(-2px); }
+    .kpi-card.alert { border-left: 4px solid #f44336; }
+    .kpi-icon { font-size: 36px; width: 36px; height: 36px; margin-bottom: 12px; }
+    .blue { color: #1976d2; } .green { color: #388e3c; } .orange { color: #f57c00; }
+    .red { color: #d32f2f; } .purple { color: #7b1fa2; } .teal { color: #00796b; }
+    .kpi-value { font-size: 28px; font-weight: 700; color: #333; }
+    .kpi-label { font-size: 13px; color: #666; margin-top: 4px; }
+    .loading { display: flex; justify-content: center; padding: 60px; }

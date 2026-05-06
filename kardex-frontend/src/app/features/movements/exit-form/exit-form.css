@@ -1,0 +1,21 @@
+    .page { padding: 0; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-title { font-size: 24px; font-weight: 600; color: #1a237e; margin: 0; }
+    .form-card { padding: 24px; margin-bottom: 16px; }
+    .form-card h3 { margin: 0 0 20px; font-size: 16px; font-weight: 600; color: #333; border-bottom: 2px solid #fce4ec; padding-bottom: 8px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .full-col { grid-column: 1 / -1; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .empty-details { text-align: center; padding: 32px; color: #999; border: 2px dashed #e0e0e0; border-radius: 8px; margin-bottom: 16px; }
+    .empty-details.warning { border-color: #ff9800; color: #e65100; background: #fff8e1; }
+    .empty-details mat-icon { font-size: 40px; width: 40px; height: 40px; display: block; margin: 0 auto 8px; }
+    .detail-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; padding: 12px; background: #fff8f8; border-radius: 8px; border: 1px solid #fce4ec; }
+    .detail-number { width: 28px; height: 28px; background: #c62828; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; margin-top: 16px; }
+    .flex-1 { flex: 1; min-width: 130px; }
+    .flex-3 { flex: 3; min-width: 200px; }
+    mat-form-field { width: 100%; }
+    .cost-info { min-width: 100px; padding: 16px 8px 0; text-align: center; }
+    .cost-label { font-size: 11px; color: #888; }
+    .cost-value { font-size: 15px; font-weight: 600; color: #c62828; }
+    .info-note { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #e3f2fd; border-radius: 8px; font-size: 13px; color: #1565c0; margin-top: 12px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }

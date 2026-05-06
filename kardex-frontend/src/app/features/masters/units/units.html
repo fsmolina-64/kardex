@@ -1,0 +1,78 @@
+    <div class="page">
+      <div class="page-header">
+        <h2 class="page-title">Unidades de medida</h2>
+        <button mat-raised-button color="primary" 
+        (click)="openForm()" *ngIf="roles.can('canCreateMasters')">
+          <mat-icon>add</mat-icon> Nueva unidad
+        </button>
+      </div>
+
+      @if (showForm()) {
+<mat-card *ngIf="showForm() && roles.can('canCreateMasters')" class="form-card">
+          <h3>{{ editingId() ? 'Editar' : 'Nueva' }} Unidad</h3>
+          <div class="inline-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Nombre</mat-label>
+              <input matInput [(ngModel)]="formName">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Abreviación</mat-label>
+              <input matInput [(ngModel)]="formAbbreviation" style="text-transform:uppercase">
+            </mat-form-field>
+            <div class="form-actions">
+              <button mat-button (click)="cancel()">Cancelar</button>
+              <button mat-raised-button color="primary"
+                (click)="save()" [disabled]="saving() || !formName.trim()">
+                {{ saving() ? 'Guardando...' : 'Guardar' }}
+              </button>
+            </div>
+          </div>
+        </mat-card>
+      }
+
+      <mat-card>
+        @if (loading()) {
+          <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+        } @else {
+          <table mat-table [dataSource]="items()" class="full-table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nombre</th>
+              <td mat-cell *matCellDef="let i">{{ i.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="abbreviation">
+              <th mat-header-cell *matHeaderCellDef>Abreviación</th>
+              <td mat-cell *matCellDef="let i">
+                <span class="abbr-chip">{{ i.abbreviation }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="products">
+              <th mat-header-cell *matHeaderCellDef>Productos</th>
+              <td mat-cell *matCellDef="let i">{{ i._count?.products ?? 0 }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let i">
+                <button mat-icon-button 
+                *ngIf="roles.can('canCreateMasters')" 
+                (click)="edit(i)" matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" 
+                *ngIf="roles.can('canDeleteMasters')" 
+                (click)="remove(i.id)" matTooltip="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+          </table>
+          @if (items().length === 0) {
+            <div class="no-data">
+              <mat-icon>straighten</mat-icon>
+              <p>No hay unidades de medida</p>
+            </div>
+          }
+        }
+      </mat-card>
+    </div>

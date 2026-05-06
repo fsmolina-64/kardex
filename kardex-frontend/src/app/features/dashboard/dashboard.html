@@ -1,0 +1,39 @@
+<div class="dashboard">
+      <h2 class="page-title">Dashboard</h2>
+      @if (kpis()) {
+        <div class="kpi-grid">
+          <mat-card class="kpi-card">
+            <mat-icon class="kpi-icon blue">inventory_2</mat-icon>
+            <div class="kpi-value">{{ kpis().totalProducts }}</div>
+            <div class="kpi-label">Productos activos</div>
+          </mat-card>
+          <mat-card class="kpi-card">
+            <mat-icon class="kpi-icon green">trending_up</mat-icon>
+            <div class="kpi-value">{{ kpis().entriesThisMonth }}</div>
+            <div class="kpi-label">Entradas del mes</div>
+          </mat-card>
+          <mat-card class="kpi-card">
+            <mat-icon class="kpi-icon orange">trending_down</mat-icon>
+            <div class="kpi-value">{{ kpis().exitsThisMonth }}</div>
+            <div class="kpi-label">Salidas del mes</div>
+          </mat-card>
+          <mat-card class="kpi-card" [class.alert]="kpis().lowStockItems > 0">
+            <mat-icon class="kpi-icon red">warning</mat-icon>
+            <div class="kpi-value">{{ kpis().lowStockItems }}</div>
+            <div class="kpi-label">Stock bajo mínimo</div>
+          </mat-card>
+          <mat-card class="kpi-card">
+            <mat-icon class="kpi-icon purple">warehouse</mat-icon>
+            <div class="kpi-value">{{ kpis().totalWarehouses }}</div>
+            <div class="kpi-label">Bodegas</div>
+          </mat-card>
+          <mat-card class="kpi-card">
+            <mat-icon class="kpi-icon teal">attach_money</mat-icon>
+            <div class="kpi-value">${{ kpis().totalInventoryValue | number:'1.2-2' }}</div>
+            <div class="kpi-label">Valor del inventario</div>
+          </mat-card>
+        </div>
+      } @else {
+        <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+      }
+    </div>

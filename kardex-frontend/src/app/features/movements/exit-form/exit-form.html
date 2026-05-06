@@ -1,0 +1,132 @@
+    <div class="page">
+      <div class="page-header">
+        <h2 class="page-title">📤 Registro de Salida</h2>
+        <button mat-button routerLink="/movements">
+          <mat-icon>arrow_back</mat-icon> Volver
+        </button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-card class="form-card">
+          <h3>Información del documento</h3>
+          <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo de documento</mat-label>
+              <mat-select formControlName="documentType">
+                <mat-option value="FACTURA_VENTA">Factura de venta</mat-option>
+                <mat-option value="NOTA_ENTREGA">Nota de entrega</mat-option>
+                <mat-option value="PRESTAMO">Préstamo</mat-option>
+                <mat-option value="DEVOLUCION_COMPRA">Devolución a proveedor</mat-option>
+                <mat-option value="CONSUMO_INTERNO">Consumo interno</mat-option>
+                <mat-option value="OTRO">Otro</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Fecha de salida</mat-label>
+              <input matInput type="datetime-local" formControlName="movementDate">
+              <mat-icon matPrefix>calendar_today</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Bodega origen</mat-label>
+              <mat-select formControlName="warehouseId" (selectionChange)="onWarehouseChange()">
+                <mat-option *ngFor="let w of warehouses" [value]="w.id">
+                  {{ w.name }} {{ w.isMain ? '(Principal)' : '' }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Cliente</mat-label>
+              <mat-select formControlName="clientId">
+                <mat-option value="">Sin cliente</mat-option>
+                <mat-option *ngFor="let c of clients" [value]="c.id">{{ c.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-col">
+              <mat-label>Motivo / Observaciones</mat-label>
+              <textarea matInput formControlName="notes" rows="2"
+                placeholder="Ej: Venta al cliente, consumo de obra, préstamo..."></textarea>
+            </mat-form-field>
+
+          </div>
+        </mat-card>
+
+        <mat-card class="form-card">
+          <div class="section-header">
+            <h3>Productos que salen</h3>
+            <button mat-raised-button color="warn" type="button"
+              (click)="addDetail()" [disabled]="!form.get('warehouseId')?.value">
+              <mat-icon>add</mat-icon> Agregar producto
+            </button>
+          </div>
+
+          <div *ngIf="!form.get('warehouseId')?.value" class="empty-details warning">
+            <mat-icon>warehouse</mat-icon>
+            <p>Primero selecciona la bodega origen para ver el stock disponible</p>
+          </div>
+
+          <div *ngIf="form.get('warehouseId')?.value && details.length === 0" class="empty-details">
+            <mat-icon>inventory_2</mat-icon>
+            <p>Agrega los productos que van a salir</p>
+          </div>
+
+          <div formArrayName="details">
+            <div *ngFor="let detail of details.controls; let i = index"
+              [formGroupName]="i" class="detail-row">
+
+              <div class="detail-number">{{ i + 1 }}</div>
+
+              <mat-form-field appearance="outline" class="flex-3">
+                <mat-label>Producto</mat-label>
+                <mat-select formControlName="productId" (selectionChange)="onProductSelect(i)">
+                  <mat-option *ngFor="let item of inventoryItems" [value]="item.productId"
+                    [disabled]="item.quantity <= 0">
+                    {{ item.product?.name }} — Stock: {{ item.quantity }} {{ item.product?.unit?.abbreviation }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Cantidad a salir</mat-label>
+                <input matInput type="number" formControlName="quantity"
+                  [max]="getAvailableStock(i)" min="0.01">
+                <span matSuffix>{{ getUnit(i) }}</span>
+                <mat-hint *ngIf="getAvailableStock(i) > 0">
+                  Disponible: {{ getAvailableStock(i) }}
+                </mat-hint>
+              </mat-form-field>
+
+              <div class="cost-info" *ngIf="getUnitCost(i) > 0">
+                <div class="cost-label">Costo prom.</div>
+                <div class="cost-value">\${{ getUnitCost(i) | number:'1.2-2' }}</div>
+              </div>
+
+              <button mat-icon-button color="warn" type="button"
+                (click)="removeDetail(i)" matTooltip="Quitar producto">
+                <mat-icon>delete</mat-icon>
+              </button>
+
+            </div>
+          </div>
+
+          <div class="info-note" *ngIf="details.length > 0">
+            <mat-icon>info</mat-icon>
+            El costo de salida se toma automáticamente del costo promedio del inventario.
+          </div>
+        </mat-card>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" routerLink="/movements">Cancelar</button>
+          <button mat-raised-button color="warn" type="submit"
+            [disabled]="loading || form.invalid || details.length === 0">
+            <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+            <mat-icon *ngIf="!loading">save</mat-icon>
+            <span>{{ loading ? 'Registrando...' : 'Registrar salida' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>

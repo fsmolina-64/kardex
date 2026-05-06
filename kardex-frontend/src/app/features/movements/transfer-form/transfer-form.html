@@ -1,0 +1,65 @@
+    <div class="page">
+      <div class="page-header">
+        <h2 class="page-title">Traslado entre Bodegas</h2>
+        <button mat-button routerLink="/movements"><mat-icon>arrow_back</mat-icon> Volver</button>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-card class="form-card">
+          <h3>Bodegas</h3>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Bodega origen</mat-label>
+              <mat-select formControlName="warehouseId">
+                <mat-option *ngFor="let w of warehouses" [value]="w.id">{{ w.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Bodega destino</mat-label>
+              <mat-select formControlName="warehouseDestId">
+                <mat-option *ngFor="let w of warehouses" [value]="w.id">{{ w.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-col">
+              <mat-label>Notas</mat-label>
+              <textarea matInput formControlName="notes" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </mat-card>
+        <mat-card class="form-card">
+          <div class="section-header">
+            <h3>Productos a trasladar</h3>
+            <button mat-raised-button type="button" (click)="addDetail()">
+              <mat-icon>add</mat-icon> Agregar producto
+            </button>
+          </div>
+          <div formArrayName="details">
+            <div *ngFor="let detail of details.controls; let i = index" [formGroupName]="i" class="detail-row">
+              <mat-form-field appearance="outline" class="flex-2">
+                <mat-label>Producto</mat-label>
+                <mat-select formControlName="productId">
+                  <mat-option *ngFor="let p of products" [value]="p.id">{{ p.name }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Cantidad</mat-label>
+                <input matInput type="number" formControlName="quantity">
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Costo unitario</mat-label>
+                <input matInput type="number" formControlName="unitCost">
+              </mat-form-field>
+              <button mat-icon-button color="warn" type="button" (click)="removeDetail(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-card>
+        <div class="form-actions">
+          <button mat-button type="button" routerLink="/movements">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid || details.length === 0">
+            <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">Registrar traslado</span>
+          </button>
+        </div>
+      </form>
+    </div>

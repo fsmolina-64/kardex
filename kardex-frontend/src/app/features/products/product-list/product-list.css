@@ -1,0 +1,17 @@
+    .page { padding: 0; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-title { font-size: 24px; font-weight: 600; color: #1a237e; margin: 0; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-card { margin-bottom: 16px; padding: 16px; }
+    .search-field { width: 100%; max-width: 400px; }
+    .full-table { width: 100%; }
+    .loading { display: flex; justify-content: center; padding: 40px; }
+    .no-data { text-align: center; padding: 40px; color: #999; }
+    .no-data mat-icon { font-size: 48px; width: 48px; height: 48px; display: block; margin: 0 auto 8px; }
+    .badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge.active { background: #e8f5e9; color: #2e7d32; }
+    .badge.inactive { background: #ffebee; color: #c62828; }
+    .low-stock { color: #f44336; font-weight: 600; }
+    .inactive-row { opacity: 0.6; }
+    .inactive-text { color: #999; text-decoration: line-through; }
+    .view-only { font-size: 11px; color: #999; padding: 4px 8px; }

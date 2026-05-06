@@ -1,0 +1,119 @@
+    <div class="page">
+      <div class="page-header">
+        <h2 class="page-title">Productos</h2>
+        <div class="header-actions">
+          <button mat-stroked-button (click)="toggleInactive()">
+            <mat-icon>{{ showInactive() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            {{ showInactive() ? 'Ocultar inactivos' : 'Ver inactivos' }}
+          </button>
+          <button mat-raised-button color="accent" (click)="exportPdf()"
+            [disabled]="products().length === 0">
+            <mat-icon>picture_as_pdf</mat-icon> PDF
+          </button>
+          @if (roles.can('canCreateProducts')) {
+            <button mat-raised-button color="primary" routerLink="/products/new">
+              <mat-icon>add</mat-icon> Nuevo producto
+            </button>
+          }
+        </div>
+      </div>
+
+      <mat-card class="filter-card">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar producto</mat-label>
+          <input matInput [(ngModel)]="search" (ngModelChange)="onSearch()"
+            placeholder="Nombre, código...">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </mat-card>
+
+      <mat-card>
+        @if (loading()) {
+          <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+        } @else {
+          <table mat-table [dataSource]="products()" class="full-table">
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef>Código</th>
+              <td mat-cell *matCellDef="let p">{{ p.code }}</td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nombre</th>
+              <td mat-cell *matCellDef="let p">
+                <span [class.inactive-text]="!p.isActive">{{ p.name }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Categoría</th>
+              <td mat-cell *matCellDef="let p">{{ p.category?.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="unit">
+              <th mat-header-cell *matHeaderCellDef>Unidad</th>
+              <td mat-cell *matCellDef="let p">{{ p.unit?.abbreviation }}</td>
+            </ng-container>
+            <ng-container matColumnDef="stock">
+              <th mat-header-cell *matHeaderCellDef>Stock</th>
+              <td mat-cell *matCellDef="let p">
+                <span [class.low-stock]="getTotalStock(p) <= p.minStock">
+                  {{ getTotalStock(p) }}
+                </span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="costPrice">
+              <th mat-header-cell *matHeaderCellDef>Costo</th>
+              <td mat-cell *matCellDef="let p">${{ p.costPrice | number:'1.2-2' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="salePrice">
+              <th mat-header-cell *matHeaderCellDef>Precio venta</th>
+              <td mat-cell *matCellDef="let p">${{ p.salePrice | number:'1.2-2' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let p">
+                <span class="badge" [class.active]="p.isActive" [class.inactive]="!p.isActive">
+                  {{ p.isActive ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let p">
+                @if (roles.can('canEditProducts')) {
+                  <button mat-icon-button [routerLink]="['/products/edit', p.id]" matTooltip="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                }
+                @if (roles.can('canDeleteProducts')) {
+                  @if (p.isActive) {
+                    <button mat-icon-button color="warn"
+                      (click)="deactivate(p)" matTooltip="Desactivar">
+                      <mat-icon>pause_circle</mat-icon>
+                    </button>
+                  } @else {
+                    <button mat-icon-button color="primary"
+                      (click)="activate(p)" matTooltip="Activar">
+                      <mat-icon>play_circle</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn"
+                      (click)="permanentDelete(p)" matTooltip="Eliminar permanentemente">
+                      <mat-icon>delete_forever</mat-icon>
+                    </button>
+                  }
+                }
+                @if (!roles.can('canEditProducts') && !roles.can('canDeleteProducts')) {
+                  <span class="view-only">Solo lectura</span>
+                }
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns;"
+              [class.inactive-row]="!row.isActive"></tr>
+          </table>
+          @if (products().length === 0) {
+            <div class="no-data">
+              <mat-icon>inventory_2</mat-icon>
+              <p>{{ showInactive() ? 'No hay productos inactivos' : 'No hay productos activos' }}</p>
+            </div>
+          }
+        }
+      </mat-card>
+    </div>

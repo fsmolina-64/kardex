@@ -1,0 +1,123 @@
+<div class="page">
+      <div class="page-header">
+        <h2 class="page-title">Kardex de Inventario</h2>
+        <button mat-raised-button color="accent" (click)="exportPdf()"
+          [disabled]="entries().length === 0" matTooltip="Exportar a PDF">
+          <mat-icon>picture_as_pdf</mat-icon> Exportar PDF
+        </button>
+      </div>
+
+      <mat-card class="filter-card">
+        <div class="filters">
+          <mat-form-field appearance="outline">
+            <mat-label>Producto</mat-label>
+            <mat-select [(ngModel)]="filterProductId" (ngModelChange)="load()">
+              <mat-option value="">Todos</mat-option>
+              <mat-option *ngFor="let p of products()" [value]="p.id">{{ p.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Bodega</mat-label>
+            <mat-select [(ngModel)]="filterWarehouseId" (ngModelChange)="load()">
+              <mat-option value="">Todas</mat-option>
+              <mat-option *ngFor="let w of warehouses()" [value]="w.id">{{ w.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Desde</mat-label>
+            <input matInput type="date" [(ngModel)]="filterFrom" (ngModelChange)="load()">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Hasta</mat-label>
+            <input matInput type="date" [(ngModel)]="filterTo" (ngModelChange)="load()">
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <mat-card>
+        @if (loading()) {
+          <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+        } @else {
+          <div class="table-wrapper">
+            <table mat-table [dataSource]="entries()" class="kardex-table">
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                <td mat-cell *matCellDef="let e">{{ e.date | date:'dd/MM/yyyy HH:mm' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="product">
+                <th mat-header-cell *matHeaderCellDef>Producto</th>
+                <td mat-cell *matCellDef="let e">{{ e.product?.name }}</td>
+              </ng-container>
+              <ng-container matColumnDef="warehouse">
+                <th mat-header-cell *matHeaderCellDef>Bodega</th>
+                <td mat-cell *matCellDef="let e">{{ e.warehouse?.name }}</td>
+              </ng-container>
+              <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                <td mat-cell *matCellDef="let e">
+                  <span class="badge" [ngClass]="getTypeClass(e.movementType)">
+                    {{ getTypeLabel(e.movementType) }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="inQty">
+                <th mat-header-cell *matHeaderCellDef class="center">Ent. Cant.</th>
+                <td mat-cell *matCellDef="let e" class="center green">{{ e.inQuantity || '-' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="inCost">
+                <th mat-header-cell *matHeaderCellDef class="center">Ent. Costo</th>
+                <td mat-cell *matCellDef="let e" class="center green">
+                  {{ e.inUnitCost ? ('$' + (e.inUnitCost | number:'1.2-2')) : '-' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="inTotal">
+                <th mat-header-cell *matHeaderCellDef class="center">Ent. Total</th>
+                <td mat-cell *matCellDef="let e" class="center green">
+                  {{ e.inTotal ? ('$' + (e.inTotal | number:'1.2-2')) : '-' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="outQty">
+                <th mat-header-cell *matHeaderCellDef class="center">Sal. Cant.</th>
+                <td mat-cell *matCellDef="let e" class="center red">{{ e.outQuantity || '-' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="outCost">
+                <th mat-header-cell *matHeaderCellDef class="center">Sal. Costo</th>
+                <td mat-cell *matCellDef="let e" class="center red">
+                  {{ e.outUnitCost ? ('$' + (e.outUnitCost | number:'1.2-2')) : '-' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="outTotal">
+                <th mat-header-cell *matHeaderCellDef class="center">Sal. Total</th>
+                <td mat-cell *matCellDef="let e" class="center red">
+                  {{ e.outTotal ? ('$' + (e.outTotal | number:'1.2-2')) : '-' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="balQty">
+                <th mat-header-cell *matHeaderCellDef class="center">Saldo Cant.</th>
+                <td mat-cell *matCellDef="let e" class="center bold">{{ e.balanceQuantity }}</td>
+              </ng-container>
+              <ng-container matColumnDef="balCost">
+                <th mat-header-cell *matHeaderCellDef class="center">Costo Prom.</th>
+                <td mat-cell *matCellDef="let e" class="center bold">
+                  ${{ e.balanceUnitCost | number:'1.2-2' }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="balTotal">
+                <th mat-header-cell *matHeaderCellDef class="center">Saldo Total</th>
+                <td mat-cell *matCellDef="let e" class="center bold">
+                  ${{ e.balanceTotal | number:'1.2-2' }}
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="columns"></tr>
+              <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+            </table>
+          </div>
+          @if (entries().length === 0) {
+            <div class="no-data">
+              <mat-icon>table_chart</mat-icon>
+              <p>No hay registros. Selecciona filtros o registra movimientos.</p>
+            </div>
+          }
+        }
+      </mat-card>
+    </div>

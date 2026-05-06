@@ -1,0 +1,103 @@
+<div class="page">
+      <div class="page-header">
+        <h2 class="page-title">Movimientos</h2>
+        <div class="header-actions">
+          @if (roles.can('canRegisterEntry')) {
+            <button mat-raised-button color="primary" routerLink="/movements/entry">
+              <mat-icon>add_circle</mat-icon> Entrada
+            </button>
+          }
+          @if (roles.can('canRegisterExit')) {
+            <button mat-raised-button color="warn" routerLink="/movements/exit">
+              <mat-icon>remove_circle</mat-icon> Salida
+            </button>
+          }
+          @if (roles.can('canRegisterTransfer')) {
+            <button mat-raised-button routerLink="/movements/transfer">
+              <mat-icon>compare_arrows</mat-icon> Traslado
+            </button>
+          }
+          <button mat-raised-button color="accent" (click)="exportPdf()"
+            [disabled]="movements().length === 0">
+            <mat-icon>picture_as_pdf</mat-icon> PDF
+          </button>
+        </div>
+      </div>
+
+      <mat-card class="filter-card">
+        <div class="filters">
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo</mat-label>
+            <mat-select [(ngModel)]="filterType" (ngModelChange)="load()">
+              <mat-option value="">Todos</mat-option>
+              <mat-option value="ENTRADA">Entrada</mat-option>
+              <mat-option value="SALIDA">Salida</mat-option>
+              <mat-option value="TRASLADO">Traslado</mat-option>
+              <mat-option value="AJUSTE_POSITIVO">Ajuste +</mat-option>
+              <mat-option value="AJUSTE_NEGATIVO">Ajuste -</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Desde</mat-label>
+            <input matInput type="date" [(ngModel)]="filterFrom" (ngModelChange)="load()">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Hasta</mat-label>
+            <input matInput type="date" [(ngModel)]="filterTo" (ngModelChange)="load()">
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <mat-card>
+        @if (loading()) {
+          <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+        } @else {
+          <table mat-table [dataSource]="movements()" class="full-table">
+            <ng-container matColumnDef="reference">
+              <th mat-header-cell *matHeaderCellDef>Referencia</th>
+              <td mat-cell *matCellDef="let m">{{ m.referenceNumber }}</td>
+            </ng-container>
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Tipo</th>
+              <td mat-cell *matCellDef="let m">
+                <span class="badge" [ngClass]="getTypeClass(m.type)">{{ getTypeLabel(m.type) }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="document">
+              <th mat-header-cell *matHeaderCellDef>Documento</th>
+              <td mat-cell *matCellDef="let m">{{ getDocLabel(m.documentType) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="warehouse">
+              <th mat-header-cell *matHeaderCellDef>Bodega</th>
+              <td mat-cell *matCellDef="let m">{{ m.warehouse?.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="user">
+              <th mat-header-cell *matHeaderCellDef>Usuario</th>
+              <td mat-cell *matCellDef="let m">{{ m.user?.fullName }}</td>
+            </ng-container>
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Fecha</th>
+              <td mat-cell *matCellDef="let m">{{ m.movementDate | date:'dd/MM/yyyy HH:mm' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef>Total</th>
+              <td mat-cell *matCellDef="let m">${{ getTotal(m) | number:'1.2-2' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let m">
+                <span class="badge" [ngClass]="getStatusClass(m.status)">{{ m.status }}</span>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+          </table>
+          @if (movements().length === 0) {
+            <div class="no-data">
+              <mat-icon>swap_horiz</mat-icon>
+              <p>No hay movimientos registrados</p>
+            </div>
+          }
+        }
+      </mat-card>
+    </div>
