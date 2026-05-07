@@ -61,7 +61,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="inQty">
-                <th mat-header-cell *matHeaderCellDef class="center">Ent. Cant.</th>
+                <th mat-header-cell *matHeaderCellDef class="center">Cantidad</th>
                 <td mat-cell *matCellDef="let e" class="center green">{{ e.inQuantity || '-' }}</td>
               </ng-container>
               <ng-container matColumnDef="inCost">
@@ -93,7 +93,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="balQty">
-                <th mat-header-cell *matHeaderCellDef class="center">Saldo Cant.</th>
+                <th mat-header-cell *matHeaderCellDef class="center">Stock total</th>
                 <td mat-cell *matCellDef="let e" class="center bold">{{ e.balanceQuantity }}</td>
               </ng-container>
               <ng-container matColumnDef="balCost">
