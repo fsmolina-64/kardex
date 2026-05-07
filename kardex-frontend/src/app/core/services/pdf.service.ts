@@ -8,27 +8,26 @@ export class PdfService {
   private addHeader(doc: jsPDF, title: string, filters: string[] = []) {
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Fondo azul oscuro en encabezado
+
     doc.setFillColor(26, 35, 126);
     doc.rect(0, 0, pageWidth, 35, 'F');
 
-    // Logo/nombre sistema
+
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.text(' Sistema Karvo', 14, 14);
 
-    // Título del reporte
+
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     doc.text(title, 14, 24);
 
-    // Fecha generación
     doc.setFontSize(9);
     const now = new Date().toLocaleString('es-EC');
     doc.text(`Generado: ${now}`, pageWidth - 14, 14, { align: 'right' });
 
-    // Filtros aplicados
+
     if (filters.length > 0) {
       doc.setFillColor(232, 234, 246);
       doc.rect(0, 35, pageWidth, 12, 'F');
