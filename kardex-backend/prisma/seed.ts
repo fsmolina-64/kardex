@@ -6,124 +6,104 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Iniciando seed...');
 
-  // Roles
-  const superAdmin = await prisma.role.upsert({
-    where: { name: 'SUPER_ADMIN' },
-    update: {},
-    create: { name: 'SUPER_ADMIN', description: 'Control total del sistema', isSystem: true },
-  });
-
-  const admin = await prisma.role.upsert({
-    where: { name: 'ADMIN' },
-    update: {},
-    create: { name: 'ADMIN', description: 'Administrador', isSystem: true },
-  });
-
-  await prisma.role.upsert({
-    where: { name: 'BODEGUERO' },
-    update: {},
-    create: { name: 'BODEGUERO', description: 'Gestión de inventario', isSystem: true },
-  });
-
-  await prisma.role.upsert({
-    where: { name: 'VENDEDOR' },
-    update: {},
-    create: { name: 'VENDEDOR', description: 'Registro de ventas', isSystem: true },
-  });
-
-  await prisma.role.upsert({
-    where: { name: 'CONTADOR' },
-    update: {},
-    create: { name: 'CONTADOR', description: 'Solo lectura financiera', isSystem: true },
-  });
-
-  await prisma.role.upsert({
-    where: { name: 'VIEWER' },
-    update: {},
-    create: { name: 'VIEWER', description: 'Solo consulta', isSystem: true },
-  });
-
+  // ── ROLES ─────────────────────────────────────
+  const roles = await Promise.all([
+    prisma.role.upsert({ where: { name: 'SUPER_ADMIN' }, update: {}, create: { name: 'SUPER_ADMIN', description: 'Control total del sistema', isSystem: true } }),
+    prisma.role.upsert({ where: { name: 'BODEGUERO' }, update: {}, create: { name: 'BODEGUERO', description: 'Gestión de inventario y movimientos', isSystem: true } }),
+    prisma.role.upsert({ where: { name: 'VENDEDOR' }, update: {}, create: { name: 'VENDEDOR', description: 'Solo puede registrar salidas', isSystem: true } }),
+    prisma.role.upsert({ where: { name: 'CONTADOR' }, update: {}, create: { name: 'CONTADOR', description: 'Solo lectura y exportar PDF', isSystem: true } }),
+    prisma.role.upsert({ where: { name: 'VIEWER' }, update: {}, create: { name: 'VIEWER', description: 'Solo consulta', isSystem: true } }),
+  ]);
   console.log('✅ Roles creados');
 
-
-  const hash = await bcrypt.hash('Admin123!', 10);
-  const user = await prisma.user.upsert({
-    where: { email: 'admin@karvo.com' },
+  // ── USUARIO ADMIN ─────────────────────────────
+  const passwordHash = await bcrypt.hash('Admin123!', 10);
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@kardex.com' },
     update: {},
     create: {
-      email: 'admin@karvo.com',
-      passwordHash: hash,
-      fullName: 'Super Administrador',
+      email: 'admin@kardex.com',
+      passwordHash,
+      fullName: 'Administrador del Sistema',
       isActive: true,
     },
   });
 
-  // Asignar rol SUPER_ADMIN al usuario
   await prisma.userRole.upsert({
-    where: { userId_roleId: { userId: user.id, roleId: superAdmin.id } },
+    where: { userId_roleId: { userId: admin.id, roleId: roles[0].id } },
     update: {},
-    create: { userId: user.id, roleId: superAdmin.id },
+    create: { userId: admin.id, roleId: roles[0].id },
   });
+  console.log('✅ Usuario admin creado');
 
-  console.log('✅ Usuario admin creado: admin@karvo.com / Admin123!');
-
-  // Unidades básicas
-  const units = [
-    { name: 'Unidad', abbreviation: 'UND' },
-    { name: 'Kilogramo', abbreviation: 'KG' },
-    { name: 'Gramo', abbreviation: 'GR' },
-    { name: 'Litro', abbreviation: 'LT' },
-    { name: 'Mililitro', abbreviation: 'ML' },
-    { name: 'Metro', abbreviation: 'MT' },
-    { name: 'Caja', abbreviation: 'CJA' },
-    { name: 'Paquete', abbreviation: 'PQT' },
+  // ── CATEGORÍAS ────────────────────────────────
+  const categorias = [
+    { name: 'Cementantes y morteros',        description: 'Cemento Portland, cal, yeso, mortero' },
+    { name: 'Áridos y pétreos',               description: 'Arena fina, arena gruesa, ripio triturado, grava' },
+    { name: 'Hierro y acero estructural',     description: 'Varillas, perfiles, mallas, alambre de amarre' },
+    { name: 'Madera y encofrado',             description: 'Tablas, puntales, tablones, pingos' },
+    { name: 'Tubería y plomería',             description: 'PVC, cobre, accesorios sanitarios, llaves' },
+    { name: 'Instalaciones eléctricas',       description: 'Cables, conduits, tomacorrientes, breakers' },
+    { name: 'Bloques y mampostería',          description: 'Bloques 15cm/10cm, ladrillos, adoquines' },
+    { name: 'Acabados y pintura',             description: 'Pintura de caucho, esmalte, cerámica, porcelanato' },
+    { name: 'Herramientas manuales',          description: 'Palas, picos, carretillas, niveles, plomadas' },
+    { name: 'Maquinaria y equipos',           description: 'Mezcladoras, compactadoras, bombas, andamios' },
+    { name: 'EPP y seguridad industrial',     description: 'Cascos, guantes, botas, chalecos' },
+    { name: 'Adhesivos e impermeabilizantes', description: 'Bondex, sikaflex, impermeabilizante, aditivos' },
   ];
 
-  for (const unit of units) {
-    await prisma.unit.upsert({
-      where: { id: unit.abbreviation },
+  for (const cat of categorias) {
+    await prisma.category.upsert({
+      where: { id: cat.name }, // upsert por name no es posible sin unique — usar findFirst
       update: {},
-      create: unit,
+      create: cat,
     }).catch(async () => {
-      // Si no existe el unique en abbreviation, crear directamente
-      const exists = await prisma.unit.findFirst({ where: { abbreviation: unit.abbreviation } });
-      if (!exists) await prisma.unit.create({ data: unit });
+      const exists = await prisma.category.findFirst({ where: { name: cat.name } });
+      if (!exists) await prisma.category.create({ data: cat });
     });
   }
+  console.log('✅ Categorías creadas');
 
+  // ── UNIDADES ──────────────────────────────────
+  const unidades = [
+    { name: 'Saco',              abbreviation: 'SAC' },
+    { name: 'Metro cúbico',      abbreviation: 'M3'  },
+    { name: 'Metro cuadrado',    abbreviation: 'M2'  },
+    { name: 'Metro lineal',      abbreviation: 'ML'  },
+    { name: 'Kilogramo',         abbreviation: 'KG'  },
+    { name: 'Quintal',           abbreviation: 'QQ'  },
+    { name: 'Varilla',           abbreviation: 'VAR' },
+    { name: 'Unidad',            abbreviation: 'UND' },
+    { name: 'Galón',             abbreviation: 'GAL' },
+    { name: 'Litro',             abbreviation: 'LT'  },
+    { name: 'Plancha',           abbreviation: 'PLN' },
+    { name: 'Rollo',             abbreviation: 'ROL' },
+  ];
+
+  for (const uni of unidades) {
+    const exists = await prisma.unit.findFirst({ where: { abbreviation: uni.abbreviation } });
+    if (!exists) await prisma.unit.create({ data: uni });
+  }
   console.log('✅ Unidades creadas');
 
-  // Categoría general
-  await prisma.category.upsert({
-    where: { id: 'cat-general' },
-    update: {},
-    create: { id: 'cat-general', name: 'General', description: 'Categoría general', isActive: true },
-  });
-
-  console.log('✅ Categoría general creada');
-
-  // Bodega principal
+  // ── BODEGA PRINCIPAL ──────────────────────────
   await prisma.warehouse.upsert({
-    where: { code: 'BOD-001' },
+    where: { code: 'BG-CENTRAL' },
     update: {},
     create: {
-      name: 'Bodega Principal',
-      code: 'BOD-001',
-      location: 'Planta principal',
+      name: 'Bodega Central',
+      code: 'BG-CENTRAL',
+      location: 'Instalaciones principales',
       isMain: true,
       isActive: true,
+      warehouseType: 'CENTRAL',
     },
   });
+  console.log('✅ Bodega central creada');
 
-  console.log('✅ Bodega principal creada');
-  console.log('🎉 Seed completado exitosamente!');
+  console.log('🎉 Seed completado');
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Error en seed:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(async () => { await prisma.$disconnect(); });
