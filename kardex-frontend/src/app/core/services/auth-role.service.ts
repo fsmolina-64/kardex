@@ -15,6 +15,10 @@ export interface RolePermissions {
   canManageUsers: boolean;
   canViewAll: boolean;
   canPrint: boolean;
+  canManageProjects: boolean;
+  canManageWorkers: boolean;
+  canRegisterAttendance: boolean;
+  canRegisterConsumo: boolean;
 }
 
 const PERMISSIONS: Record<AppRole, RolePermissions> = {
@@ -23,30 +27,35 @@ const PERMISSIONS: Record<AppRole, RolePermissions> = {
     canCreateMasters: true, canDeleteMasters: true,
     canRegisterEntry: true, canRegisterExit: true, canRegisterTransfer: true,
     canManageUsers: true, canViewAll: true, canPrint: true,
+    canManageProjects: true, canManageWorkers: true, canRegisterAttendance: true, canRegisterConsumo: true,
   },
   BODEGUERO: {
     canCreateProducts: true, canEditProducts: true, canDeleteProducts: false,
     canCreateMasters: true, canDeleteMasters: false,
     canRegisterEntry: true, canRegisterExit: true, canRegisterTransfer: true,
     canManageUsers: false, canViewAll: true, canPrint: true,
+    canManageProjects: true, canManageWorkers: true, canRegisterAttendance: true, canRegisterConsumo: true,
   },
   VENDEDOR: {
     canCreateProducts: false, canEditProducts: false, canDeleteProducts: false,
     canCreateMasters: false, canDeleteMasters: false,
     canRegisterEntry: false, canRegisterExit: true, canRegisterTransfer: false,
     canManageUsers: false, canViewAll: true, canPrint: true,
+    canManageProjects: false, canManageWorkers: false, canRegisterAttendance: false, canRegisterConsumo: false,
   },
   CONTADOR: {
     canCreateProducts: false, canEditProducts: false, canDeleteProducts: false,
     canCreateMasters: false, canDeleteMasters: false,
     canRegisterEntry: false, canRegisterExit: false, canRegisterTransfer: false,
     canManageUsers: false, canViewAll: true, canPrint: true,
+    canManageProjects: false, canManageWorkers: false, canRegisterAttendance: false, canRegisterConsumo: false,
   },
   VIEWER: {
     canCreateProducts: false, canEditProducts: false, canDeleteProducts: false,
     canCreateMasters: false, canDeleteMasters: false,
     canRegisterEntry: false, canRegisterExit: false, canRegisterTransfer: false,
     canManageUsers: false, canViewAll: true, canPrint: true,
+    canManageProjects: false, canManageWorkers: false, canRegisterAttendance: false, canRegisterConsumo: false,
   },
 };
 

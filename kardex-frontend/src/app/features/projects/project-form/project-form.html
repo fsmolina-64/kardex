@@ -1,0 +1,93 @@
+<div class="page">
+  <div class="page-header">
+    <h2 class="page-title">
+      <button mat-icon-button (click)="cancel()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      {{ isEdit() ? 'Editar Obra' : 'Nueva Obra' }}
+    </h2>
+  </div>
+
+  @if (loading()) {
+    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else {
+    <mat-card class="form-card">
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre de la obra *</mat-label>
+          <input matInput [(ngModel)]="formData.name" placeholder="Casa Familia Pérez">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Código *</mat-label>
+          <input matInput [(ngModel)]="formData.code" placeholder="OBRA-001">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-col">
+          <mat-label>Dirección</mat-label>
+          <input matInput [(ngModel)]="formData.address" placeholder="Av. Las Américas 123">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Cliente / Propietario</mat-label>
+          <mat-select [(ngModel)]="formData.clientId">
+            <mat-option value="">Sin cliente</mat-option>
+            @for (c of clients(); track c.id) {
+              <mat-option [value]="c.id">{{ c.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Supervisor</mat-label>
+          <mat-select [(ngModel)]="formData.supervisorId">
+            <mat-option value="">Sin supervisor</mat-option>
+            @for (u of supervisors(); track u.id) {
+              <mat-option [value]="u.id">{{ u.fullName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select [(ngModel)]="formData.status">
+            @for (s of statusOptions; track s.value) {
+              <mat-option [value]="s.value">{{ s.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Presupuesto ($)</mat-label>
+          <input matInput [(ngModel)]="formData.budget" type="number" placeholder="50000.00">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de inicio</mat-label>
+          <input matInput [(ngModel)]="formData.startDate" type="date">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha estimada de fin</mat-label>
+          <input matInput [(ngModel)]="formData.estimatedEndDate" type="date">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-col">
+          <mat-label>Notas</mat-label>
+          <textarea matInput [(ngModel)]="formData.notes" rows="3"></textarea>
+        </mat-form-field>
+
+      </div>
+
+      <div class="form-actions">
+        <button mat-button (click)="cancel()">Cancelar</button>
+        <button mat-raised-button color="primary"
+          (click)="save()"
+          [disabled]="saving() || !formData.name.trim() || !formData.code.trim()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </mat-card>
+  }
+</div>

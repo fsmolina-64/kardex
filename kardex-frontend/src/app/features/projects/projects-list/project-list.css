@@ -1,0 +1,17 @@
+.page { padding: 24px; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.page-title { margin: 0; font-size: 1.5rem; }
+.header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.filter-select { width: 160px; }
+.full-table { width: 100%; }
+.loading { display: flex; justify-content: center; padding: 40px; }
+.no-data { display: flex; flex-direction: column; align-items: center; padding: 40px; color: #999; }
+.no-data mat-icon { font-size: 48px; width: 48px; height: 48px; }
+.sub-text { font-size: 0.75rem; color: #888; }
+.inactive-text { color: #bbb; }
+.inactive-row td { opacity: 0.6; }
+.badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 500; }
+.status-planning { background: #e3f2fd; color: #1565c0; }
+.status-active { background: #e8f5e9; color: #2e7d32; }
+.status-paused { background: #fff8e1; color: #f57f17; }
+.status-finished { background: #f3e5f5; color: #6a1b9a; }

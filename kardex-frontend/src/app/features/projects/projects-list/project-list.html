@@ -1,0 +1,132 @@
+<div class="page">
+  <div class="page-header">
+    <h2 class="page-title">Obras</h2>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="filter-select">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="filterStatus" (ngModelChange)="onStatusFilter()">
+          @for (s of statusOptions; track s.value) {
+            <mat-option [value]="s.value">{{ s.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-stroked-button (click)="toggleInactive()">
+        <mat-icon>{{ showInactive() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        {{ showInactive() ? 'Ocultar inactivas' : 'Ver inactivas' }}
+      </button>
+      @if (roles.can('canManageProjects')) {
+        <button mat-raised-button color="primary" (click)="goNew()">
+          <mat-icon>add</mat-icon> Nueva obra
+        </button>
+      }
+    </div>
+  </div>
+
+  <mat-card>
+    @if (loading()) {
+      <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+    } @else {
+      <table mat-table [dataSource]="items()" class="full-table">
+
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>Código</th>
+          <td mat-cell *matCellDef="let i">
+            <strong [class.inactive-text]="!i.isActive">{{ i.code }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let i">
+            <span [class.inactive-text]="!i.isActive">{{ i.name }}</span>
+            @if (i.address) {
+              <div class="sub-text">{{ i.address }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="client">
+          <th mat-header-cell *matHeaderCellDef>Cliente</th>
+          <td mat-cell *matCellDef="let i">{{ i.client?.name || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let i">
+            <span class="badge status-{{ statusColors[i.status] }}">
+              {{ statusLabels[i.status] }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="budget">
+          <th mat-header-cell *matHeaderCellDef>Presupuesto</th>
+          <td mat-cell *matCellDef="let i">
+            {{ i.budget ? ('$' + (i.budget | number:'1.2-2')) : '-' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let i">
+            @if (roles.can('canManageProjects')) {
+              <button mat-icon-button (click)="goEdit(i.id)" matTooltip="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+            }
+            @if (i.isActive && i.status === 'PLANNING') {
+              <button mat-icon-button color="primary"
+                (click)="changeStatus(i, 'ACTIVE')" matTooltip="Iniciar obra">
+                <mat-icon>play_arrow</mat-icon>
+              </button>
+            }
+            @if (i.isActive && i.status === 'ACTIVE') {
+              <button mat-icon-button
+                (click)="changeStatus(i, 'PAUSED')" matTooltip="Pausar obra">
+                <mat-icon>pause</mat-icon>
+              </button>
+              <button mat-icon-button color="accent"
+                (click)="changeStatus(i, 'FINISHED')" matTooltip="Finalizar obra">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+            }
+            @if (i.isActive && i.status === 'PAUSED') {
+              <button mat-icon-button color="primary"
+                (click)="changeStatus(i, 'ACTIVE')" matTooltip="Reanudar obra">
+                <mat-icon>play_arrow</mat-icon>
+              </button>
+            }
+            @if (i.isActive) {
+              <button mat-icon-button color="warn"
+                (click)="toggleActive(i)" matTooltip="Desactivar">
+                <mat-icon>pause_circle</mat-icon>
+              </button>
+            } @else {
+              <button mat-icon-button color="primary"
+                (click)="toggleActive(i)" matTooltip="Activar">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+              @if (roles.can('canDeleteMasters')) {
+                <button mat-icon-button color="warn"
+                  (click)="permanentDelete(i)" matTooltip="Eliminar permanentemente">
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
+              }
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"
+          [class.inactive-row]="!row.isActive"></tr>
+      </table>
+
+      @if (items().length === 0) {
+        <div class="no-data">
+          <mat-icon>construction</mat-icon>
+          <p>No hay obras registradas</p>
+        </div>
+      }
+    }
+  </mat-card>
+</div>

@@ -18,7 +18,7 @@ interface MenuItem {
   selector: 'app-sidebar',
   standalone: true,
   imports: [CommonModule, MatIconModule],
-  templateUrl:'./sidebar.html',
+  templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.css']
 })
 export class Sidebar {
@@ -31,15 +31,31 @@ export class Sidebar {
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
     { label: 'Productos', icon: 'inventory_2', route: '/products' },
     {
+      label: 'Obras', icon: 'construction', route: '/projects',
+      permission: 'canManageProjects'
+    },
+    {
       label: 'Movimientos', icon: 'swap_horiz', expanded: false, children: [
         { label: 'Ver todos', icon: 'list', route: '/movements' },
         { label: 'Entrada', icon: 'add_circle', route: '/movements/entry', permission: 'canRegisterEntry' },
         { label: 'Salida', icon: 'remove_circle', route: '/movements/exit', permission: 'canRegisterExit' },
         { label: 'Traslado', icon: 'compare_arrows', route: '/movements/transfer', permission: 'canRegisterTransfer' },
+        { label: 'Consumo Obra', icon: 'handyman', route: '/movements/consumo', permission: 'canRegisterConsumo' },
+        { label: 'Devolución Obra', icon: 'undo', route: '/movements/devolucion-obra', permission: 'canRegisterConsumo' },
       ]
     },
     { label: 'Kardex', icon: 'table_chart', route: '/kardex' },
     { label: 'Reportes', icon: 'bar_chart', route: '/reports' },
+    {
+      label: 'Mano de Obra', icon: 'groups', expanded: false, children: [
+        { label: 'Trabajadores', icon: 'badge', route: '/workers' },
+        { label: 'Asistencia', icon: 'fact_check', route: '/attendance' },
+        { label: 'Registrar Asistencia', icon: 'edit_calendar', route: '/attendance/bulk', permission: 'canRegisterAttendance' },
+      ]
+    },
+    {
+      label: 'Herramientas', icon: 'build', route: '/tool-assignments'
+    },
     {
       label: 'Maestros', icon: 'tune', expanded: false, children: [
         { label: 'Categorías', icon: 'category', route: '/masters/categories' },

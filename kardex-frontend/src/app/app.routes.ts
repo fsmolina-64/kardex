@@ -89,6 +89,54 @@ export const routes: Routes = [
         data: { permission: 'canManageUsers' },
         loadComponent: () => import('./features/admin/users/users').then(m => m.Users)
       },
+      {
+        path: 'projects',
+        loadComponent: () => import('./features/projects/project-list/project-list').then(m => m.ProjectList)
+      },
+      {
+        path: 'projects/new',
+        canActivate: [roleGuard],
+        data: { permission: 'canManageProjects' },
+        loadComponent: () => import('./features/projects/project-form/project-form').then(m => m.ProjectForm)
+      },
+      {
+        path: 'projects/edit/:id',
+        canActivate: [roleGuard],
+        data: { permission: 'canManageProjects' },
+        loadComponent: () => import('./features/projects/project-form/project-form').then(m => m.ProjectForm)
+      },
+      {
+        path: 'workers',
+        loadComponent: () => import('./features/workers/worker-list/worker-list').then(m => m.WorkerList)
+      },
+      {
+        path: 'attendance',
+        loadComponent: () => import('./features/attendance/attendance-list/attendance-list').then(m => m.AttendanceList)
+      },
+      {
+        path: 'attendance/bulk',
+        canActivate: [roleGuard],
+        data: { permission: 'canRegisterAttendance' },
+        loadComponent: () => import('./features/attendance/attendance-bulk/attendance-bulk').then(m => m.AttendanceBulk)
+      },
+      // HERRAMIENTAS
+      {
+        path: 'tool-assignments',
+        loadComponent: () => import('./features/tool-assignments/tool-assignment-list/tool-assignment-list').then(m => m.ToolAssignmentList)
+      },
+      // MOVIMIENTOS NUEVOS
+      {
+        path: 'movements/consumo',
+        canActivate: [roleGuard],
+        data: { permission: 'canRegisterConsumo' },
+        loadComponent: () => import('./features/movements/consumo-form/consumo-form').then(m => m.ConsumoForm)
+      },
+      {
+        path: 'movements/devolucion-obra',
+        canActivate: [roleGuard],
+        data: { permission: 'canRegisterConsumo' },
+        loadComponent: () => import('./features/movements/devolucion-obra-form/devolucion-obra-form').then(m => m.DevolucionObraForm)
+      },
     ],
   },
   { path: '**', redirectTo: 'dashboard' },
