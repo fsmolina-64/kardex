@@ -1,0 +1,127 @@
+<div class="page">
+  <div class="page-header">
+    <h2 class="page-title">
+      <button mat-icon-button (click)="cancel()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      Registrar Asistencia
+    </h2>
+  </div>
+
+  <mat-card class="config-card">
+    <div class="config-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Obra *</mat-label>
+        <mat-select [(ngModel)]="selectedProjectId" (ngModelChange)="loadWorkers()">
+          <mat-option value="">Seleccionar obra</mat-option>
+          @for (p of projects(); track p.id) {
+            <mat-option [value]="p.id">{{ p.code }} — {{ p.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha *</mat-label>
+        <input matInput type="date" [(ngModel)]="selectedDate">
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  @if (loading()) {
+    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  }
+
+  @if (result()) {
+    <mat-card class="result-card">
+      <div class="result-content">
+        <mat-icon color="primary">check_circle</mat-icon>
+        <div>
+          <strong>Asistencia registrada</strong>
+          <p>Creados: {{ result().created }} — Omitidos: {{ result().skipped }}</p>
+          @if (result().errors?.length > 0) {
+            <p class="errors">Errores: {{ result().errors.join(', ') }}</p>
+          }
+        </div>
+        <button mat-stroked-button (click)="cancel()">Ver asistencia</button>
+      </div>
+    </mat-card>
+  }
+
+  @if (rows().length > 0 && !result()) {
+    <mat-card>
+      <table mat-table [dataSource]="rows()" class="full-table">
+
+        <ng-container matColumnDef="fullName">
+          <th mat-header-cell *matHeaderCellDef>Trabajador</th>
+          <td mat-cell *matCellDef="let r">
+            <strong>{{ r.fullName }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Rol</th>
+          <td mat-cell *matCellDef="let r">{{ r.workerRole }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="rate">
+          <th mat-header-cell *matHeaderCellDef>Jornal</th>
+          <td mat-cell *matCellDef="let r">${{ r.dailyRate | number:'1.2-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Asistencia</th>
+          <td mat-cell *matCellDef="let r">
+            <mat-select [(ngModel)]="r.status" class="status-select">
+              @for (s of statusOptions; track s.value) {
+                <mat-option [value]="s.value">{{ s.label }}</mat-option>
+              }
+            </mat-select>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="hours">
+          <th mat-header-cell *matHeaderCellDef>Horas extra</th>
+          <td mat-cell *matCellDef="let r">
+            @if (r.status === 'EXTRA') {
+              <input class="hours-input" type="number" [(ngModel)]="r.hoursWorked"
+                placeholder="ej: 10" min="1" max="24">
+            } @else {
+              <span class="text-muted">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cost">
+          <th mat-header-cell *matHeaderCellDef>Costo calculado</th>
+          <td mat-cell *matCellDef="let r">
+            <strong>${{ calcCost(r) | number:'1.2-2' }}</strong>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+
+      <div class="total-bar">
+        <span>Total mano de obra del día:</span>
+        <strong>${{ totalCost() | number:'1.2-2' }}</strong>
+      </div>
+
+      <div class="form-actions">
+        <button mat-button (click)="cancel()">Cancelar</button>
+        <button mat-raised-button color="primary"
+          (click)="save()" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : 'Registrar asistencia' }}
+        </button>
+      </div>
+    </mat-card>
+  }
+
+  @if (!loading() && rows().length === 0 && !result()) {
+    <mat-card>
+      <div class="no-data">
+        <mat-icon>groups</mat-icon>
+        <p>Selecciona una obra para cargar los trabajadores</p>
+      </div>
+    </mat-card>
+  }
+</div>

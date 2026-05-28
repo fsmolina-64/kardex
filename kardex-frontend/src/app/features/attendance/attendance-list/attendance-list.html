@@ -1,0 +1,102 @@
+<div class="page">
+  <div class="page-header">
+    <h2 class="page-title">Asistencia</h2>
+    <div class="header-actions">
+      @if (roles.can('canRegisterAttendance')) {
+        <button mat-raised-button color="primary" (click)="goRegister()">
+          <mat-icon>edit_calendar</mat-icon> Registrar asistencia
+        </button>
+      }
+    </div>
+  </div>
+
+  <mat-card class="filters-card">
+    <div class="filters-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Obra</mat-label>
+        <mat-select [(ngModel)]="filterProjectId" (ngModelChange)="load()">
+          <mat-option value="">Todas</mat-option>
+          @for (p of projects(); track p.id) {
+            <mat-option [value]="p.id">{{ p.code }} — {{ p.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput type="date" [(ngModel)]="filterFrom" (ngModelChange)="load()">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput type="date" [(ngModel)]="filterTo" (ngModelChange)="load()">
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  <mat-card>
+    @if (loading()) {
+      <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+    } @else {
+      <table mat-table [dataSource]="items()" class="full-table">
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let i">{{ i.date | date:'dd/MM/yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="worker">
+          <th mat-header-cell *matHeaderCellDef>Trabajador</th>
+          <td mat-cell *matCellDef="let i">
+            <strong>{{ i.worker?.fullName }}</strong>
+            <div class="sub-text">{{ i.worker?.workerRole }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="project">
+          <th mat-header-cell *matHeaderCellDef>Obra</th>
+          <td mat-cell *matCellDef="let i">{{ i.project?.code }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let i">
+            <span class="badge status-{{ statusColors[i.status] }}">
+              {{ statusLabels[i.status] }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="hours">
+          <th mat-header-cell *matHeaderCellDef>Horas</th>
+          <td mat-cell *matCellDef="let i">{{ i.hoursWorked || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cost">
+          <th mat-header-cell *matHeaderCellDef>Costo</th>
+          <td mat-cell *matCellDef="let i">${{ i.dailyCost | number:'1.2-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let i">
+            @if (roles.can('canRegisterAttendance')) {
+              <button mat-icon-button color="warn"
+                (click)="remove(i)" matTooltip="Eliminar registro">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+
+      @if (items().length === 0) {
+        <div class="no-data">
+          <mat-icon>fact_check</mat-icon>
+          <p>No hay registros de asistencia</p>
+        </div>
+      }
+    }
+  </mat-card>
+</div>
