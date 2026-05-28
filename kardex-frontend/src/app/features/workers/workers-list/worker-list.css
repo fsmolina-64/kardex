@@ -1,0 +1,17 @@
+.page { padding: 24px; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.page-title { margin: 0; font-size: 1.5rem; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.form-card { padding: 24px; margin-bottom: 16px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.full-table { width: 100%; }
+.loading { display: flex; justify-content: center; padding: 40px; }
+.no-data { display: flex; flex-direction: column; align-items: center; padding: 40px; color: #999; }
+.no-data mat-icon { font-size: 48px; width: 48px; height: 48px; }
+.inactive-text { color: #bbb; }
+.inactive-row td { opacity: 0.6; }
+.badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 500; }
+.active { background: #e8f5e9; color: #2e7d32; }
+.inactive { background: #ffebee; color: #c62828; }
+.role-badge { background: #e3f2fd; color: #1565c0; }
