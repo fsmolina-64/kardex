@@ -60,7 +60,6 @@ export class ProductsService {
       const barcodeExists = await this.prisma.product.findUnique({ where: { barcode: data.barcode } });
       if (barcodeExists) throw new ConflictException('Ya existe un producto con ese código de barras');
     }
-    // Limpiar campos opcionales vacíos
     if (!data.barcode) delete data.barcode;
     if (!data.description) delete data.description;
     return this.prisma.product.create({ data });

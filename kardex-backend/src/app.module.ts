@@ -17,6 +17,7 @@ import { RolesModule } from './roles/roles.module';
 import { ProjectsModule } from './projects/projects.module';
 import { WorkersModule } from './workers/workers.module';
 import { AttendanceModule } from './DailyAttendance/attendance.module';
+import { ToolAssignmentsModule } from './ToolAssignments/tool-assignments.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AttendanceModule } from './DailyAttendance/attendance.module';
     ProjectsModule,
     WorkersModule,
     AttendanceModule,
+    ToolAssignmentsModule,
   ],
 })
 export class AppModule {}
