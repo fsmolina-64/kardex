@@ -1,0 +1,185 @@
+<div class="page">
+  <div class="page-header">
+    <h2 class="page-title">Herramientas y Maquinaria</h2>
+    <div class="header-actions">
+      @if (roles.can('canManageProjects')) {
+        <button mat-raised-button color="primary" (click)="openForm()">
+          <mat-icon>add</mat-icon> Asignar herramienta
+        </button>
+      }
+    </div>
+  </div>
+
+  <mat-card class="filters-card">
+    <div class="filters-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Obra</mat-label>
+        <mat-select [(ngModel)]="filterProjectId" (ngModelChange)="load()">
+          <mat-option value="">Todas</mat-option>
+          @for (p of projects(); track p.id) {
+            <mat-option [value]="p.id">{{ p.code }} — {{ p.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="filterStatus" (ngModelChange)="load()">
+          @for (s of statusOptions; track s.value) {
+            <mat-option [value]="s.value">{{ s.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <h3>Asignar Herramienta / Maquinaria</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Herramienta / Maquinaria *</mat-label>
+          <mat-select [(ngModel)]="formData.productId">
+            @for (p of products(); track p.id) {
+              <mat-option [value]="p.id">{{ p.code }} — {{ p.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Obra *</mat-label>
+          <mat-select [(ngModel)]="formData.projectId">
+            @for (p of projects(); track p.id) {
+              <mat-option [value]="p.id">{{ p.code }} — {{ p.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de asignación *</mat-label>
+          <input matInput type="date" [(ngModel)]="formData.assignedDate">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Cantidad *</mat-label>
+          <input matInput type="number" [(ngModel)]="formData.quantity" min="1">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-col">
+          <mat-label>Notas / Condición</mat-label>
+          <input matInput [(ngModel)]="formData.notes">
+        </mat-form-field>
+      </div>
+      <div class="form-actions">
+        <button mat-button (click)="cancel()">Cancelar</button>
+        <button mat-raised-button color="primary"
+          (click)="save()"
+          [disabled]="saving() || !formData.productId || !formData.projectId">
+          {{ saving() ? 'Guardando...' : 'Asignar' }}
+        </button>
+      </div>
+    </mat-card>
+  }
+
+  @if (showReturnForm()) {
+    <mat-card class="form-card return-card">
+      <h3>Registrar Devolución</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de devolución *</mat-label>
+          <input matInput type="date" [(ngModel)]="returnData.returnedDate">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Notas / Condición de retorno</mat-label>
+          <input matInput [(ngModel)]="returnData.notes">
+        </mat-form-field>
+      </div>
+      <div class="form-actions">
+        <button mat-button (click)="cancel()">Cancelar</button>
+        <button mat-raised-button color="primary"
+          (click)="confirmReturn()" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : 'Confirmar devolución' }}
+        </button>
+      </div>
+    </mat-card>
+  }
+
+  <mat-card>
+    @if (loading()) {
+      <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+    } @else {
+      <table mat-table [dataSource]="items()" class="full-table">
+
+        <ng-container matColumnDef="product">
+          <th mat-header-cell *matHeaderCellDef>Herramienta</th>
+          <td mat-cell *matCellDef="let i">
+            <strong>{{ i.product?.name }}</strong>
+            <div class="sub-text">{{ i.product?.code }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="project">
+          <th mat-header-cell *matHeaderCellDef>Obra</th>
+          <td mat-cell *matCellDef="let i">{{ i.project?.code }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="assignedDate">
+          <th mat-header-cell *matHeaderCellDef>Asignado</th>
+          <td mat-cell *matCellDef="let i">{{ i.assignedDate | date:'dd/MM/yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+          <td mat-cell *matCellDef="let i">{{ i.quantity }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let i">
+            <span class="badge status-{{ statusColors[i.status] }}">
+              {{ statusLabels[i.status] }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="returnedDate">
+          <th mat-header-cell *matHeaderCellDef>Devuelto</th>
+          <td mat-cell *matCellDef="let i">
+            {{ i.returnedDate ? (i.returnedDate | date:'dd/MM/yyyy') : '-' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let i">
+            @if (i.status === 'ASSIGNED') {
+              <button mat-icon-button color="primary"
+                (click)="openReturn(i)" matTooltip="Registrar devolución">
+                <mat-icon>assignment_return</mat-icon>
+              </button>
+              <button mat-icon-button color="warn"
+                (click)="changeStatus(i, 'LOST')" matTooltip="Marcar como perdido">
+                <mat-icon>search_off</mat-icon>
+              </button>
+              <button mat-icon-button color="warn"
+                (click)="changeStatus(i, 'DAMAGED')" matTooltip="Marcar como dañado">
+                <mat-icon>broken_image</mat-icon>
+              </button>
+              @if (roles.can('canDeleteMasters')) {
+                <button mat-icon-button color="warn"
+                  (click)="remove(i)" matTooltip="Eliminar asignación">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+
+      @if (items().length === 0) {
+        <div class="no-data">
+          <mat-icon>build</mat-icon>
+          <p>No hay herramientas asignadas</p>
+        </div>
+      }
+    }
+  </mat-card>
+</div>
