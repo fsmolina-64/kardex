@@ -1,6 +1,7 @@
 import {
   IsString, IsOptional, IsEnum, IsDateString,
-  IsDecimal, MinLength, MaxLength
+  IsDecimal, MinLength, MaxLength,
+  IsNumber
 } from 'class-validator';
 import { ProjectStatus } from '@prisma/client';
 
@@ -40,8 +41,8 @@ export class CreateProjectDto {
   estimatedEndDate?: string;
 
   @IsOptional()
-  @IsDecimal()
-  budget?: string;
+  @IsNumber()
+  budget?: number;
 
   @IsOptional()
   @IsString()
