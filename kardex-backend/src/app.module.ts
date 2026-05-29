@@ -18,6 +18,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { WorkersModule } from './workers/workers.module';
 import { AttendanceModule } from './DailyAttendance/attendance.module';
 import { ToolAssignmentsModule } from './ToolAssignments/tool-assignments.module';
+import { ImportModule } from './import/import.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ToolAssignmentsModule } from './ToolAssignments/tool-assignments.module
     WorkersModule,
     AttendanceModule,
     ToolAssignmentsModule,
+    ImportModule,
   ],
 })
 export class AppModule {}
