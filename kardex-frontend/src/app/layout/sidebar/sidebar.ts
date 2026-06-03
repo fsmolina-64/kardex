@@ -71,6 +71,10 @@ export class Sidebar {
         { label: 'Usuarios', icon: 'manage_accounts', route: '/admin/users' },
       ]
     },
+    {
+      label: 'Importar Excel', icon: 'upload_file', route: '/import',
+      permission: 'canCreateProducts'
+    },
   ];
 
   canShow(item: MenuItem): boolean {

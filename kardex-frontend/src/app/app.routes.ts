@@ -119,12 +119,10 @@ export const routes: Routes = [
         data: { permission: 'canRegisterAttendance' },
         loadComponent: () => import('./features/attendance/attendance-bulk/attendance-bulk').then(m => m.AttendanceBulk)
       },
-      // HERRAMIENTAS
       {
         path: 'tool-assignments',
         loadComponent: () => import('./features/tool-assignments/tool-assignment-list/tool-assignment-list').then(m => m.ToolAssignmentList)
       },
-      // MOVIMIENTOS NUEVOS
       {
         path: 'movements/consumo',
         canActivate: [roleGuard],
@@ -136,6 +134,12 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { permission: 'canRegisterConsumo' },
         loadComponent: () => import('./features/movements/devolucion-obra-form/devolucion-obra-form').then(m => m.DevolucionObraForm)
+      },
+      {
+        path: 'import',
+        canActivate: [roleGuard],
+        data: { permission: 'canCreateProducts' },
+        loadComponent: () => import('./features/import/import').then(m => m.Import)
       },
     ],
   },

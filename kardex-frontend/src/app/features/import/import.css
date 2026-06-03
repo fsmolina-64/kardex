@@ -1,0 +1,133 @@
+.page {
+    padding: 24px;
+}
+
+.page-header {
+    margin-bottom: 16px;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.tab-content {
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.info-card {
+    padding: 16px;
+    background: #e3f2fd;
+}
+
+.info-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.info-row p {
+    margin: 0;
+}
+
+.upload-card {
+    padding: 24px;
+}
+
+.upload-area {
+    margin: 16px 0;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px;
+    border: 2px dashed #90caf9;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #1976d2;
+    transition: background 0.2s;
+}
+
+.file-label:hover {
+    background: #e3f2fd;
+}
+
+.file-label mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+}
+
+.file-selected {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2e7d32;
+    margin-bottom: 12px;
+}
+
+.upload-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.result-card {
+    padding: 24px;
+}
+
+.result-summary {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-radius: 8px;
+}
+
+.result-item strong {
+    display: block;
+    font-size: 1.5rem;
+}
+
+.result-item span {
+    font-size: 0.85rem;
+}
+
+.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.warn {
+    background: #fff8e1;
+    color: #f57f17;
+}
+
+.error {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.error-table {
+    width: 100%;
+}
+
+h4 {
+    margin: 0 0 12px;
+}
